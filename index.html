@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=>, initial-scale=1.0">
+    <title>TODO LISTS</title>
+    <link rel="stylesheet" href="todo.css">
+</head>
+<body>
+  <h1>MY TODO'S</h1>
+  <div class="todo-container">
+  <p id="count">Total tasks:</p>
+    <input id="name" placeholder="Enter your task">
+    <button id="addTask-btn" onclick="addTask()">Add</button>
+    <ul id="items"></ul>
+</div>
+    <script>
+ let ip = document.getElementById('name')
+ let ul = document.getElementById('items')
+
+let task =  JSON.parse(localStorage.getItem("lists")) || [];
+
+task.forEach(function(item,index){
+      createTask(item,index);
+});
+
+function createTask(item,index){
+ let list = document.createElement('li');
+ let text = document.createElement('span');
+ text.innerText = item.text;
+ list.appendChild(text);
+  let del = document.createElement('button')
+    del.innerText = 'Delete'
+ let edit = document.createElement('button')
+   edit.innerText = 'Edit Task'
+ let complete = document.createElement('button')
+   complete.innerText = 'completed'
+ 
+     ul.appendChild(list);
+    list.appendChild(edit);
+    list.appendChild(del);
+    list.appendChild(complete);
+     
+let count = document.getElementById('count')
+ count.innerText = 'Total tasks:' + ul.children.length;
+
+     del.onclick = function(){
+    list.remove();
+    task.splice(task.indexOf(item),1);
+    localStorage.setItem("lists",JSON.stringify(task));
+
+     count.innerText = 'Total tasks:' + ul.children.length;
+ }
+ 
+  edit.onclick = function(){
+    let newTask = prompt('Enter your Task');
+    if(newTask !== null && newTask.trim() !== '' ){
+     text.innerText = newTask;
+     item.text = newTask;
+     localStorage.setItem("lists", JSON.stringify(task));
+     list.appendChild(edit);
+     list.appendChild(del);
+     list.appendChild(complete);
+  }
+}
+    
+  complete.onclick = function(){
+    list.style.textDecoration = 'line-through';
+    item.completed = true;
+    localStorage.setItem("lists", JSON.stringify(task));
+  }
+
+  if(item.completed === true){
+  list.style.textDecoration = "line-through";
+}
+
+}
+
+
+
+
+ function addTask(){
+
+      if(ip.value.trim() === ''){ //remove extra spaces
+         return; //to stop the func
+      }
+
+      task.push({
+        text: ip.value,
+        completed: false
+      });
+      
+      let data = JSON.stringify(task);
+      localStorage.setItem("lists", data);
+      
+createTask(task[task.length-1], task.length-1);
+ip.value='';
+ }
+    </script>
+</body>
+</html>
